@@ -11,9 +11,13 @@
 // use the first core to handle all interfacing excluding audio outputs, it will prioritize sd inputs, then user inputs, then gui outputs
 // the second core will be saved to do all of the audio processing and will do the audio outputs
 
+// will have 3 push buttons for select, and then volume up and down
+
 // Gain will be done off chip to improve fidelity
 
 // the audio outputs may need to be moved to the first core depending on resource usage
+
+
 //////////////////////////////////////////////////////////////////////////////
 
 // initialization functions
@@ -22,9 +26,9 @@
 
 // qspi for additional ram and flash (this may be unnecessary, look at datasheet closer)
 
-// spi for data chip
+// spi for dac chip
 
-// spi for sd card
+// spi for sd card and tft
 
 // gpio for rotary encoder and other push buttons
 
@@ -34,22 +38,33 @@
 //////////////////////////////////////////////////////////////////////////////
 
 // Audio Processing function(s)
+
 // try to do a convolution over the each frame as determined in the file header
 // if this is not fast enough, we may have to consider other options but this could be an incredibly clean output if it is fast enough
 
-// to do this, simply multiply all coefficients with the values from the sd and sum them
+// to do this, simply "convolve" all coefficients with the values from the sd and sum them
 // this will have to be run once on each channel (could be a huge bottleneck which is why we might need to consider other options)
+
+// This function will also act as the main function for core two (tentative)
 
 //////////////////////////////////////////////////////////////////////////////
 
 // Processing Coefficients generation function(s)
-// This will be done on the first core, it is fine if there is some latency given the number of interrupts
 
-// This will sum several exponentials to get a simulated frequency response curve in dt domain
+// For this one we will have an already predetermined set of three functions which will correspond to a 1 gain over all frequencies
+// These three functions can then just be multiplied by the determined coefficients and added together to get a function to convolve with the signal
+
+// This will be done on the first core, it is fine if there is quite a bit of latency (a second or two) between user inputs and 
+// a change given the number of interrupts handled by this core
+
+// These functions will be causual, which is fine as all values are defined for audio playback, however this will help for the edge case at the beginning
+
 
 //////////////////////////////////////////////////////////////////////////////
 
 // Data control function to navigate sd card
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 
