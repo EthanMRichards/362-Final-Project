@@ -9,7 +9,13 @@
 #include "hardware/uart.h"
 
 
-
+#define EQ_SAMPLE_RATE 48000.0
+static const float EQ_FREQS[7] = {
+    50.f, 250.f, 550.f, 1000.f, 2000.f, 4000.f, 10000.f
+};
+#define EQ_Q_DEFAULT 1.0f
+#define EQ_GAIN_MIN (-6.0f)
+#define EQ_GAIN_MAX (+6.0f)
 typedef struct {
     float a0, a1, a2, b0, b1, b2; // coeffs
 } biquadcoeff_t ;
