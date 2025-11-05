@@ -11,7 +11,7 @@
 
 
 typedef struct {
-    float a1, a2, b0, b1, b2; // coeffs
+    float a0, a1, a2, b0, b1, b2; // coeffs
 } biquadcoeff_t ;
 
 typedef struct {
@@ -38,12 +38,17 @@ typedef struct {
     float f0[7]; // center freq
     float Q[7]; // q shelf
     float gainDB[7]; // target gain in dB
-    float smooth; // 0..1 per-sample smoothing (e.g., 0.995–0.9995)
+    float smooth; // per-sample smoothing 
     float sr; // sample rate
-} ep7_t; //eq point  
+} ep7_t;  
 
 // API CALLS
-
+static float dtft (biquadcoeff_t *c /*coeff structweenar*/, biquadstate_t *s /*current z values (L,R)*/, float x/*X signal of X*/); 
+static biquadcoeff_t upper_coeff (float sr /*sample rate*/, float f0/*center freq*/, float Q /*q she;f*/, float gainDB /*target gain*/); //upper cutoff freq calculation
+static biquadcoeff_t lower_coeff (float sr, float f0, float Q, float gainDB); //lower cutoff freq calc
+static biquadcoeff_t peak_coeff (float sr, float f0, float Q, float gainDB); // center freq
+static void eq7_init(ep7_t* e, float sr); //init for the struct
+static void norm_a0(biquadcoeff_t* c);//a0 normalizer (1)
 
 
 #endif
