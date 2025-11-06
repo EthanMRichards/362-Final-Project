@@ -41,19 +41,17 @@ typedef enum {
 typedef struct {
     band_t bands[7];
     band_type_t type[7];
-    float f0[7]; // center freq
-    float Q[7]; // q shelf
-    float gainDB[7]; // target gain in dB
-    float smooth; // per-sample smoothing 
-    float sr; // sample rate
-} ep7_t;  
+    float f0[7]; // center frequencies
+    float gaindB[7]; // target gain in dB
+    float smooth; // per-sample smoothing
+} eq7_t;  
 
 // API CALLS
 static float dtft (biquadcoeff_t *c /*coeff structweenar*/, biquadstate_t *s /*current z values (L,R)*/, float x/*X signal of X*/); 
-static biquadcoeff_t upper_coeff (float sr /*sample rate*/, float f0/*center freq*/, float Q /*q she;f*/, float gainDB /*target gain*/); //upper cutoff freq calculation
-static biquadcoeff_t lower_coeff (float sr, float f0, float Q, float gainDB); //lower cutoff freq calc
-static biquadcoeff_t peak_coeff (float sr, float f0, float Q, float gainDB); // center freq
-static void eq7_init(ep7_t* e, float sr); //init for the struct
+static biquadcoeff_t upper_coeff (float f0, float gaindB); //upper cutoff freq calculation
+static biquadcoeff_t lower_coeff (float f0, float gaindB); //lower cutoff freq calc
+static biquadcoeff_t peak_coeff (float f0, float gaindB); // center freq
+static void eq7_init(eq7_t* e); //init for the struct
 static void norm_a0(biquadcoeff_t* c);//a0 normalizer (1)
 
 
