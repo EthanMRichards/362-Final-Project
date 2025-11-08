@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "headers.h": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "biquad.h": "c"
     }
 }

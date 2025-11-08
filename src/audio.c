@@ -1,4 +1,4 @@
-#include "headers.h"
+#include "audio.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -6,6 +6,16 @@
 #include <string.h>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
+
+void push(int left_data, int right_data){
+    audio_data temp = current;
+    while (temp.next != NULL){
+        temp = *temp.next;
+    }
+    temp.next = malloc(sizeof(audio_data));
+    (*temp.next).left = left_data;
+    (*temp.next).right = right_data;
+}
 
 // Audio Processing function(s)
 
