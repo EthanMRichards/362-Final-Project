@@ -23,11 +23,11 @@ __attribute__((weak)) void audio_src_task(void) {}
 __attribute__((weak)) bool audio_src_pop_block(int16_t out[FRAMES_PER_BLOCK * STEREO]) { (void)out; return false; }
 
 typedef struct {
-    int16_t data[FRAMES_PER_BLOCK * STEREO];
-} block_i16_t;
+    int32_t data[FRAMES_PER_BLOCK * STEREO];
+} block_i24_t;
 
 
-static block_i16_t ring[PROC_RING_BLOCKS];
+static block_i24_t ring[PROC_RING_BLOCKS];
 static _Atomic uint32_t head = 0; // write by Core1 (DSP)
 static _Atomic uint32_t tail = 0; // read by Core0 (DAC)
 // --------------Produce Consumer Atomics for stack management
@@ -57,13 +57,18 @@ static float in_f [2][FRAMES_PER_BLOCK * STEREO];
 static float out_f[2][FRAMES_PER_BLOCK * STEREO];
 static volatile int last_filled = -1;
 
-// Convert float block to int16 interleaved
-static void floats_to_i16(const float *in, int16_t *out) {
-    for (int n=0;n<FRAMES_PER_BLOCK;++n) {
-        float L = in[2*n+0]; if (L>1) L=1; if (L<-1) L=-1;
-        float R = in[2*n+1]; if (R>1) R=1; if (R<-1) R=-1;
-        out[2*n+0] = (int16_t)lrintf(L * 32767.0f);
-        out[2*n+1] = (int16_t)lrintf(R * 32767.0f);
+// Convert float block to int24 interleaved
+static inline int32_t float_to_s24(float x) {
+    if (x >  1.0f) x =  1.0f;
+    if (x < -1.0f) x = -1.0f;
+    int32_t v = (int32_t)lrintf(x * 8388607.0f);
+    return v;
+}
+
+static void floats_to_s24(const float *in, int32_t *out) {
+    for (int n = 0; n < FRAMES_PER_BLOCK; ++n) {
+        out[2*n+0] = float_to_s24(in[2*n+0]);
+        out[2*n+1] = float_to_s24(in[2*n+1]);
     }
 }
 
@@ -75,57 +80,75 @@ static void core1_main(void) {
         // Run EQ
         eq7_process(&g_eq, in_f[idx], out_f[idx], FRAMES_PER_BLOCK);
         // Convert to int16 and push into processed-output ring
-        int16_t tmp[FRAMES_PER_BLOCK * STEREO];
-        floats_to_i16(out_f[idx], tmp);
-        while (!processed_push(tmp)) {
-            tight_loop_contents();
-        }
+        int32_t tmp[FRAMES_PER_BLOCK * STEREO];
+        floats_to_s24(out_f[idx], tmp);
+        while (!processed_push(tmp)) { tight_loop_contents(); }
         multicore_fifo_push_blocking(idx);
         last_filled = (int)idx;
     }
 }
 // ---------------- Core 0 DAC output and feeding Core 1 ----------------
-static inline void dac_write_sample(int16_t s) {
-    uint16_t word = (uint16_t)s;
-    uint8_t bytes[2] = { (uint8_t)(word >> 8), (uint8_t)(word & 0xFF) };
-    spi_write_blocking(spi0, bytes, 2);
+static inline void spi_write_u24_be(uint32_t u24)
+{
+    u24 &= 0x00FFFFFFu; // keep only 24 bits
+    uint8_t b[3] = {
+        (uint8_t)(u24 >> 16),
+        (uint8_t)(u24 >>  8),
+        (uint8_t)(u24 >>  0)
+    };
+    spi_write_blocking(spi0, b, 3);
+}
+static inline void spi_write_frame_s24_stereo(int32_t L, int32_t R)
+{
+    uint32_t ul = ((uint32_t)L) & 0x00FFFFFFu; // keep 24b two's comp
+    uint32_t ur = ((uint32_t)R) & 0x00FFFFFFu;
+
+    uint8_t b[6] = {
+        (uint8_t)(ul >> 16), (uint8_t)(ul >> 8), (uint8_t)ul,
+        (uint8_t)(ur >> 16), (uint8_t)(ur >> 8), (uint8_t)ur
+    };
+    spi_write_blocking(spi0, b, 6);
+}
+static inline void dac_write_frame_s24(int32_t L, int32_t R) {
+    spi_write_frame_s24_stereo(L, R);
 }
 
 // 48 kHz timer ISR: write one stereo frame each tick
 static bool __not_in_flash_func(dac_timer_cb)(repeating_timer_t *t) {
     (void)t;
-    static int16_t blk[FRAMES_PER_BLOCK * STEREO];
-    static int sample_idx = FRAMES_PER_BLOCK; // force initial pop
+    static int32_t blk[FRAMES_PER_BLOCK * STEREO];
+    static int sample_idx = FRAMES_PER_BLOCK;
     static bool have_block = false;
+
     if (sample_idx >= FRAMES_PER_BLOCK) {
-        // Try to pop a new processed block
         have_block = processed_pop(blk);
         sample_idx = 0;
         if (!have_block) {
-            dac_write_sample(0); // L
-            dac_write_sample(0); // R
+            // clock out zeros for both channels (3 bytes each)
+            static const uint8_t z6[6] = {0,0,0,0,0,0};
+            spi_write_blocking(spi0, z6, 6);
             return true;
         }
     }
-    int16_t L = blk[2*sample_idx + 0];
-    int16_t R = blk[2*sample_idx + 1];
+
+    int32_t L = blk[2*sample_idx + 0];
+    int32_t R = blk[2*sample_idx + 1];
     sample_idx++;
-    dac_write_sample(L);
-    dac_write_sample(R);
+    dac_write_frame_s24(L, R);
     return true;
 }
 
 static void feed_core1_with_input_blocks(void) {
     static int idx = 0;
     // Pull one block from SD source (or fill zeros)
-    int16_t in_i16[FRAMES_PER_BLOCK * STEREO];
-    if (!audio_src_pop_block(in_i16)) {
-        memset(in_i16, 0, sizeof(in_i16));
+    int32_t in_i32[FRAMES_PER_BLOCK * STEREO];
+    if (!audio_src_pop_block(in_i32)) {
+        memset(in_i32, 0, sizeof(in_i32));
     }
     // Convert to float for EQ input buffers shared with Core 1
     for (int n=0; n<FRAMES_PER_BLOCK; ++n) {
-        in_f[idx][2*n+0] = in_i16[2*n+0] * (1.0f/32768.0f);
-        in_f[idx][2*n+1] = in_i16[2*n+1] * (1.0f/32768.0f);
+        in_f[idx][2*n+0] = in_i32[2*n+0] * (1.0f/8388608.0f);
+        in_f[idx][2*n+1] = in_i32[2*n+1] * (1.0f/8388608.0f);
     }
     // Hand this index to Core 1 (non-blocking preferred)
     if (!multicore_fifo_push_timeout_us((uint32_t)idx, 0)) {
