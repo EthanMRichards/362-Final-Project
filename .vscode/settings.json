@@ -2,6 +2,10 @@
     "files.associations": {
         "headers.h": "c",
         "math.h": "c",
-        "biquad.h": "c"
+        "biquad.h": "c",
+        "string.h": "c",
+        "stdlib.h": "c",
+        "gpio.h": "c",
+        "i2c.h": "c"
     }
 }
