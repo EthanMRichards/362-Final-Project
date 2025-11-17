@@ -1,6 +1,5 @@
 #include "initializations.h"
 #include "audio.h"
-
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -13,7 +12,14 @@
 //////////////////////////////////////////////////////////////////////////////
 
 // initialization functions
+static volatile int g_band_idx = 3;          // 0..6
+static volatile float g_gain_db[7] = {0};    // stored gains per band
+static volatile enum { MODE_GAIN, MODE_BAND } g_mode = MODE_GAIN;
 
+// step sizes
+#define GAIN_STEP_DB 0.5f
+#define GAIN_MIN_DB  EQ_GAIN_MIN
+#define GAIN_MAX_DB  EQ_GAIN_MAX
 // timer interrupts for outputs
 void timer_isr(){
 
@@ -80,10 +86,33 @@ void spi_inter_init(){
     gpio_put(DISPLAY_CSn, 1);
 }
 
+static void encoder_init(void) {
+    gpio_init(ENC_A); gpio_set_dir(ENC_A, false); gpio_pull_up(ENC_A);
+    gpio_init(ENC_B); gpio_set_dir(ENC_B, false); gpio_pull_up(ENC_B);
+    gpio_init(ENC_SW); gpio_set_dir(ENC_SW, false); gpio_pull_up(ENC_SW);
+    gpio_set_irq_enabled_with_callback(ENC_A, GPIO_IRQ_EDGE_RISE|GPIO_IRQ_EDGE_FALL, true, &gpio_irq);
+    gpio_set_irq_enabled(ENC_SW, GPIO_IRQ_EDGE_FALL, true); // active low push
+}
+
 
 // gpio for rotary encoder and other push buttons
-void gpio_irq() {
+static void gpio_irq(uint gpio, uint32_t events) {
+    if (gpio == ENC_A && (events & (GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL))) {
+        enc_on_edge(gpio_get(ENC_A));
+    } else if (gpio == ENC_SW && (events & GPIO_IRQ_EDGE_FALL)) {
+        g_mode = (g_mode == MODE_GAIN) ? MODE_BAND : MODE_GAIN;
+    }
+}
 
+
+void gpio_pins_init(){
+    // buttons
+    gpio_init(SELECT_PIN);
+    gpio_init(BACK_PIN);
+    
+    // rotary encoder
+    gpio_init();
+    gpio_init();
 }
 
 void gpio_pins_init(){

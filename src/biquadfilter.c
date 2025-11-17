@@ -101,7 +101,7 @@ static float dtft (biquadcoeff_t *c, biquadstate_t *s, float x) {
 // -----------------------------------------
 
 
-//
+//  Initialize the EQ object:
 static void eq7_init(eq7_t* e) {
     memset(e, 0, sizeof(*e));
     e->smooth = 0.9975f; // ~15–20 ms glide @ 48k

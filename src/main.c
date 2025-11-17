@@ -1,12 +1,24 @@
-#include "interfacing.h"
-#include "biquad.h"
-
+#include "headers.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
+#include "biquad.h" 
+#include "initializations.h"
+#include "audio.h"
+
+
+static volatile int g_band_idx = 3;          // 0..6
+static volatile float g_gain_db[7] = {0};    // stored gains per band
+static volatile enum { MODE_GAIN, MODE_BAND } g_mode = MODE_GAIN;
+
+// step sizes
+#define GAIN_STEP_DB 0.5f
+#define GAIN_MIN_DB  EQ_GAIN_MIN
+#define GAIN_MAX_DB  EQ_GAIN_MAX
+
 
 // Audio output may be able to be done with the dma if we set up baud rate properly in the spi
 // The idea being that data will be sent at the exact right time by the spi, and then as the buffer empties the dma can be triggered to send more, saving cpu
