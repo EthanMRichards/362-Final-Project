@@ -26,8 +26,7 @@ static volatile enum { MODE_GAIN, MODE_BAND } g_mode = MODE_GAIN;
 // use the first core to handle all interfacing excluding audio outputs, it will prioritize sd inputs, then user inputs, then gui outputs
 // the second core will be saved to do all of the audio processing and will do the audio outputs
 
-// will have 4 push buttons for select, back, and then volume up and down
-
+// will have 2 push buttons for select, back
 // rotary encoder can do the rest
 
 // The final gain will be done off chip to improve fidelity and reduce clipping

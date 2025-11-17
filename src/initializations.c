@@ -94,8 +94,8 @@ static void encoder_init(void) {
     gpio_set_irq_enabled(ENC_SW, GPIO_IRQ_EDGE_FALL, true); // active low push
 }
 
-// gpio for rotary encoder and other push buttons
 
+// gpio for rotary encoder and other push buttons
 static void gpio_irq(uint gpio, uint32_t events) {
     if (gpio == ENC_A && (events & (GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL))) {
         enc_on_edge(gpio_get(ENC_A));
@@ -104,6 +104,16 @@ static void gpio_irq(uint gpio, uint32_t events) {
     }
 }
 
+
+void gpio_pins_init(){
+    // buttons
+    gpio_init(SELECT_PIN);
+    gpio_init(BACK_PIN);
+    
+    // rotary encoder
+    gpio_init();
+    gpio_init();
+}
 
 void gpio_pins_init(){
     // buttons
