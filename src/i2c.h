@@ -14,6 +14,10 @@
 #define DAC_SDA_PIN 6
 #define DAC_SCL_PIN 7
 
+#define EEPROM_ADDR 0x50
+#define DAC_WADDR 0x98
+#define DAC_RADDR 0x99
+
 void init_i2c(void);
 
 void eeprom_write(uint16_t loc, const char* data, uint8_t len);
