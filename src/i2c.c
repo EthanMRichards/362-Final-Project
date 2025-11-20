@@ -65,7 +65,6 @@ void eeprom_read(uint16_t loc, char data[], uint8_t len){
 
 // Can read/write 1 byte at a time
 void dac_write(uint8_t reg, uint8_t data){
-
     uint8_t buf[2];
     buf[0] = reg;
     buf[1] = data;
