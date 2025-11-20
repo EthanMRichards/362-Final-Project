@@ -70,7 +70,7 @@ void eeprom_read(uint16_t loc, char data[], uint8_t len){
 }
 
 void dac_write(uint16_t loc, const char* data, uint8_t len){
-    if (len > 32) return;
+    if (len > 8) return;
 
     uint8_t buf[2 + 32];
     buf[0] = (uint8_t)(loc >> 8);
@@ -88,7 +88,7 @@ void dac_write(uint16_t loc, const char* data, uint8_t len){
 }
 
 void dac_read(uint16_t loc, char data[], uint8_t len){
-    if (len > 32) return;
+    if (len > 8) return;
 
     uint8_t addr_bytes[2];
     addr_bytes[0] = (uint8_t)(loc >> 8);
