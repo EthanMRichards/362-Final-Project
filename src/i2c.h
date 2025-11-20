@@ -15,8 +15,7 @@
 #define DAC_SCL_PIN 7
 
 #define EEPROM_ADDR 0x50
-#define DAC_WADDR 0x98
-#define DAC_RADDR 0x99
+#define DAC_ADDR 0x4c
 
 void init_i2c(void);
 
