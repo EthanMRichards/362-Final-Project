@@ -18,7 +18,6 @@ extern int step1;
 extern int offset1;
 
 // Part 3: Analog-to-digital conversion for a volume level.
-extern int volume;
 
 void init_wavetable(void);
 void set_freq(int chan, float f);

@@ -1,49 +1,57 @@
-#include "headers.h"
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-#include "pico/stdlib.h"
-#include "hardware/uart.h"
-#include "biquad.h" 
-#include "initializations.h"
-#include "audio.h"
+    #include "headers.h"
+    #include <stdio.h>
+    #include <math.h>
+    #include <stdlib.h>
+    #include <string.h>
+    #include "pico/stdlib.h"
+    #include "hardware/uart.h"
+    #include "biquad.h" 
+    #include "initializations.h"
+    #include "audio.h"
+    #include "hardware/adc.h"
+    #include "hardware/pwm.h"
+    #include "queue.h"
+    #include "support.h"
+    #include "volume.h"
 
 
-static volatile int g_band_idx = 3;          // 0..6
-static volatile float g_gain_db[7] = {0};    // stored gains per band
-static volatile enum { MODE_GAIN, MODE_BAND } g_mode = MODE_GAIN;
 
-// step sizes
-#define GAIN_STEP_DB 0.5f
-#define GAIN_MIN_DB  EQ_GAIN_MIN
-#define GAIN_MAX_DB  EQ_GAIN_MAX
+    // Audio output may be able to be done with the dma if we set up baud rate properly in the spi
+    // The idea being that data will be sent at the exact right time by the spi, and then as the buffer empties the dma can be triggered to send more, saving cpu
 
+    // use the first core to handle all interfacing excluding audio outputs, it will prioritize sd inputs, then user inputs, then gui outputs
+    // the second core will be saved to do all of the audio processing and will do the audio outputs
 
-// Audio output may be able to be done with the dma if we set up baud rate properly in the spi
-// The idea being that data will be sent at the exact right time by the spi, and then as the buffer empties the dma can be triggered to send more, saving cpu
+    // will have 2 push buttons for select, back
+    // rotary encoder can do the rest
 
-// use the first core to handle all interfacing excluding audio outputs, it will prioritize sd inputs, then user inputs, then gui outputs
-// the second core will be saved to do all of the audio processing and will do the audio outputs
+    // The final gain will be done off chip to improve fidelity and reduce clipping
 
-// will have 2 push buttons for select, back
-// rotary encoder can do the rest
+    // This is the one thing where we could probably use a potentiometer for gain and then an adc to just display the current volume
+    // However if possible I would like to explore the digital options (keep prior idea the back pocket just in case)
 
-// The final gain will be done off chip to improve fidelity and reduce clipping
+    // If digital we could probably get away with 2 ^ 5 levels as this is more than typical already
+    // From there we could probably use a resistor ladder dac for this into a voltage controlled amplifier
+    // Depending on how the DAC works (I need to read its datasheet more) this could also fill in for this purpose
 
-// This is the one thing where we could probably use a potentiometer for gain and then an adc to just display the current volume
-// However if possible I would like to explore the digital options (keep prior idea the back pocket just in case)
+    // the audio outputs may need to be moved to the first core depending on resource usage
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// If digital we could probably get away with 2 ^ 5 levels as this is more than typical already
-// From there we could probably use a resistor ladder dac for this into a voltage controlled amplifier
-// Depending on how the DAC works (I need to read its datasheet more) this could also fill in for this purpose
+    // Main
+    // Start with pin initializations
+    // Initialize the second core
+    // will mostly be calling more information from the sd card so that it is constantly accessible to the second core
+    // Most of the heavy lifting will be done by timers anyway
+ int main(void) {
+    stdio_init_all();
 
-// the audio outputs may need to be moved to the first core depending on resource usage
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    init_pwm_audio();        
+    set_freq(0, 440.0f);
+    set_freq(1, 0.0f);
 
-// Main
-// Start with pin initializations
-// Initialize the second core
-// will mostly be calling more information from the sd card so that it is constantly accessible to the second core
-// Most of the heavy lifting will be done by timers anyway
-
+    while (1) {
+        update_volume_from_pot();
+        printf("volume = %u\n", volume);
+        sleep_ms(200);
+    }
+}
