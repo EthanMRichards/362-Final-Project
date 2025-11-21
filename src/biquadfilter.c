@@ -13,9 +13,6 @@
 #define EQ_SAMPLE_RATE 48000.0
 
 // Fixed band centers (Hz) for our 7-band layout.
-static const float EQ_FREQS[7] = {
-    50.f, 250.f, 550.f, 1000.f, 2000.f, 4000.f, 10000.f
-};
 
 // Default Q for peaking bands (bandwidth control). We use Q=1.0 here.
 #define EQ_Q_DEFAULT 1.0f

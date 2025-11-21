@@ -1,5 +1,5 @@
-#ifndef BIQUAD.h
-#define BIQUAD.h
+#ifndef BIQUAD_H
+#define BIQUAD_H
 
 #include <stdio.h>
 #include <math.h>
