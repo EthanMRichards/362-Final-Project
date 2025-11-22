@@ -59,11 +59,12 @@ void pwm_dac_init(){
 }
 
 // i2c for dac control
-void i2c_dac_init(){
-    gpio_set_function(DAC_SCL, GPIO_FUNC_I2C);
-    gpio_set_function(DAC_SDA, GPIO_FUNC_I2C);
-    // come back to
-}
+// void i2c_dac_init(){
+//     gpio_set_function(DAC_SCL, GPIO_FUNC_I2C);
+//     gpio_set_function(DAC_SDA, GPIO_FUNC_I2C);
+//     // come back to
+// }
+// No longer needed
 
 // spi for sd card and tft (use spi 1)
 void spi_inter_init(){

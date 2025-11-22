@@ -21,7 +21,7 @@ void init_dac(){
     gpio_set_function(DAC_LRCK_PIN, GPIO_FUNC_PWM);
     uint slice_num = pwm_gpio_to_slice_num(DAC_LRCK_PIN);
     pwm_set_wrap(slice_num, 3125);
-    pwm_set_chan_level(slice_num, PWM_CHAN_B, 1563); //figure out later
+    pwm_set_chan_level(slice_num, PWM_CHAN_B, 1563); //duty_cycle * (1 + (pwm_hw->slice[pwm_gpio_to_slice_num(slice_num)].top)) / 100
     pwm_set_enabled(slice_num, true);
     pwm_set_irq_enabled(slice_num, true);
     irq_set_exclusive_handler(PWM_DEFAULT_IRQ_NUM(), pwm_dac_isr);
@@ -33,11 +33,10 @@ void init_dac(){
 
 void pwm_dac_isr(){
     pwm_clear_irq(pwm_gpio_to_slice_num(DAC_LRCK_PIN));
-    // fill spi0 fifo with next four points
-    spi0_hw->dr = current.left >> 16; // left high
-    spi0_hw->dr = current.left & 0xFF; // left low
-    spi0_hw->dr = current.right >> 16; // right high
-    spi0_hw->dr = current.right & 0xFF; // right low
+    spi_write16_blocking(spidac, current.left & 0xff00, 0);
+    spi_write16_blocking(spidac, current.left & 0x00ff, 0);
+    spi_write16_blocking(spidac, current.right & 0xff00, 0);
+    spi_write16_blocking(spidac, current.right & 0x00ff, 0);
     audio_data temp = current;
     current = *current.next; 
     free(&temp);
