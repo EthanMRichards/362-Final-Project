@@ -27,7 +27,7 @@
 #endif
 /****************************************** */
 
-void init_spi_lcd() {
+void init_spi_lcd(){
     gpio_set_function(PIN_CS, GPIO_FUNC_SIO);
     gpio_set_function(PIN_DC, GPIO_FUNC_SIO);
     gpio_set_function(PIN_nRESET, GPIO_FUNC_SIO);
@@ -49,6 +49,10 @@ void init_spi_lcd() {
 
 Picture* load_image(const char* image_data);
 void free_image(Picture* pic);
+
+void update_gain(){ //doesn't have to be gain, can just be any arbitrary value 
+
+}
 
 int main() {
     stdio_init_all();
