@@ -1,5 +1,5 @@
-#ifndef BIQUAD.h
-#define BIQUAD.h
+#ifndef BIQUAD_H
+#define BIQUAD_H
 
 #include <stdio.h>
 #include <math.h>
@@ -53,6 +53,9 @@ static biquadcoeff_t lower_coeff (float f0, float gaindB); //lower cutoff freq c
 static biquadcoeff_t peak_coeff (float f0, float gaindB); // center freq
 static void eq7_init(eq7_t* e); //init for the struct
 static void norm_a0(biquadcoeff_t* c);//a0 normalizer (1)
-
+void eq7_process(eq7_t* e, const float* in, float* out, int nFrames);
+void eq7_set_gain(eq7_t* e, int band_idx, float gaindB);
+static void updater(band_t* b, band_type_t type, int band_idx, float gaindB);
+static inline void lerp_coef(biquadcoeff_t* d, const biquadcoeff_t* t, float k);
 
 #endif
