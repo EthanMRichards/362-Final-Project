@@ -2,7 +2,11 @@
   "files.associations": {
     "headers.h": "c",
     "math.h": "c",
-    "spi_dac.h": "c"
+    "spi_dac.h": "c",
+    "multicore.h": "c",
+    "initializations.h": "c",
+    "spi.h": "c",
+    "stdlib.h": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat",
   "C_Cpp_Runner.cCompilerPath": "gcc",

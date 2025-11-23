@@ -1,6 +1,10 @@
-#define spidac ((spi_inst_t *)spi0_hw) //change at will
-#define SPI_DAC_SCK 3
-#define SPI_DAC_TX 4
-#define DAC_MCLK_PIN 0
-#define DAC_LRCK_PIN 1
-#define DAC_BCK_PIN 2
+void init_dac();
+void pwm_dac_isr();
+
+// Ideally always have at least a few parts of the data at a time
+int16_t data_buffer[4] __attribute__((aligned(8)));
+
+// FILLER GPIO NUMBERS WILL BE UPDATED LATER
+#define DAC_MCLK 6
+#define DAC_BCK 7
+

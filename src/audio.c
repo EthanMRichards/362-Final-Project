@@ -1,4 +1,4 @@
-#include "headers.h"
+// #include "headers.h"
 #include <math.h>
 #include <string.h>
 #include <stdint.h>
@@ -91,24 +91,25 @@ static void core1_main(void) {
 static inline void spi_write_u24_be(uint32_t u24)
 {
     u24 &= 0x00FFFFFFu; // keep only 24 bits
-    uint8_t b[3] = {
-        (uint8_t)(u24 >> 16),
-        (uint8_t)(u24 >>  8),
-        (uint8_t)(u24 >>  0)
+    // Made alterations to base it off 16 bit spi writes
+    uint8_t b[2] = {
+        (uint16_t)(u24 >> 16),
+        (uint16_t)(u24)
     };
-    spi_write_blocking(spi0, b, 3);
+    spi_write_blocking(spi0, b, 2);
 }
 static inline void spi_write_frame_s24_stereo(int32_t L, int32_t R)
 {
     uint32_t ul = ((uint32_t)L) & 0x00FFFFFFu; // keep 24b two's comp
     uint32_t ur = ((uint32_t)R) & 0x00FFFFFFu;
-
+    // Made alterations to base it off 16 bit spi writes
     uint8_t b[6] = {
-        (uint8_t)(ul >> 16), (uint8_t)(ul >> 8), (uint8_t)ul,
-        (uint8_t)(ur >> 16), (uint8_t)(ur >> 8), (uint8_t)ur
+        (uint16_t)(ul >> 16), (uint16_t)ul,
+        (uint16_t)(ur >> 16), (uint16_t)ur
     };
-    spi_write_blocking(spi0, b, 6);
+    spi_write_blocking(spi0, b, 4);
 }
+
 static inline void dac_write_frame_s24(int32_t L, int32_t R) {
     spi_write_frame_s24_stereo(L, R);
 }
@@ -125,8 +126,8 @@ static bool __not_in_flash_func(dac_timer_cb)(repeating_timer_t *t) {
         sample_idx = 0;
         if (!have_block) {
             // clock out zeros for both channels (3 bytes each)
-            static const uint8_t z6[6] = {0,0,0,0,0,0};
-            spi_write_blocking(spi0, z6, 6);
+            static const uint8_t z4[4] = {0,0,0,0};
+            spi_write_blocking(spi0, z4, 4);
             return true;
         }
     }
@@ -136,6 +137,30 @@ static bool __not_in_flash_func(dac_timer_cb)(repeating_timer_t *t) {
     sample_idx++;
     dac_write_frame_s24(L, R);
     return true;
+}
+
+// Slightly altered version of above dac_timer_cb function to better work with the isr (I think)
+void __not_in_flash_func(write_dac_data)() {
+    static int32_t blk[FRAMES_PER_BLOCK * STEREO];
+    static int sample_idx = FRAMES_PER_BLOCK;
+    static bool have_block = false;
+
+    if (sample_idx >= FRAMES_PER_BLOCK) {
+        have_block = processed_pop(blk);
+        sample_idx = 0;
+        if (!have_block) {
+            // clock out zeros for both channels
+            static const uint8_t z4[4] = {0,0,0,0};
+            spi_write_blocking(spi0, z4, 4);
+            return;
+        }
+    }
+
+    int32_t L = blk[2*sample_idx + 0];
+    int32_t R = blk[2*sample_idx + 1];
+    sample_idx++;
+    dac_write_frame_s24(L, R);
+    return;
 }
 
 static void feed_core1_with_input_blocks(void) {
