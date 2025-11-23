@@ -4,7 +4,6 @@
 #define DAC_LR 1
 #define DAC_SDA 4
 #define DAC_SCL 5
-
 // spi 1 pins
 #define SD_SCK 10
 #define SD_TX 11
@@ -20,9 +19,9 @@
 #define BACK_PIN 16
 
 // rotary encoder pins
-#define x 1
-#define y 1
-
+#define ENC_A 17
+#define ENC_B 18
+#define ENC_SW 19
 
 void timer_isr();
 void timer_init();
