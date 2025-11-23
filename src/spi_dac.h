@@ -4,3 +4,6 @@
 #define DAC_MCLK_PIN 0
 #define DAC_LRCK_PIN 1
 #define DAC_BCK_PIN 2
+
+#define DUTY_CYCLE 50
+#define READ_SRDATA_ADDR x
