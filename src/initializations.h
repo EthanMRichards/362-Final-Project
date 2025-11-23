@@ -20,8 +20,8 @@
 #define BACK_PIN 16
 
 // rotary encoder pins
-#define
-#define
+#define x 1
+#define y 1
 
 
 void timer_isr();

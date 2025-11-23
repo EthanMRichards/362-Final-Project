@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>   
+#include "initializations.h"
 
 /****************************************** */
 #define PIN_SDI    x
