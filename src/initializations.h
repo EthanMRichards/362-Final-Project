@@ -18,10 +18,6 @@
 #define DISPLAY_RST 45
 #define DISPLAY_DC 44
 
-// More display pins (Placeholder Numbers)
-#define DISPLAY_DC 1
-#define DISPLAY_nRESET 1
-
 // button pins
 #define BACK_PIN 39
 
