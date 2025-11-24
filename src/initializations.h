@@ -18,6 +18,10 @@
 #define DISPLAY_RST 45
 #define DISPLAY_DC 44
 
+// More display pins (Placeholder Numbers)
+#define DISPLAY_DC 1
+#define DISPLAY_nRESET 1
+
 // button pins
 #define BACK_PIN 39
 
@@ -31,11 +35,13 @@
 #define EE_SCL 19
 #define EE_SDA 18
 
-void timer_isr();
-void timer_init();
-void spi_dac_init();
-void pwm_dac_init();
-void i2c_dac_init();
-void spi_inter_init();
-void gpio_pins_init();
-void dma_init();
+// Initialization functions are seperated by files
+
+// void timer_isr();
+// void timer_init();
+// void spi_dac_init();
+// void pwm_dac_init();
+// void i2c_dac_init();
+// void spi_inter_init();
+// void gpio_pins_init();
+// void dma_init();
