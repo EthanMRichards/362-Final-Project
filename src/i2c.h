@@ -1,3 +1,5 @@
+#ifndef I2C_H
+#define I2C_H
 #include <stdio.h>
 #include <stdlib.h>
 #include "pico/stdlib.h"
@@ -10,3 +12,5 @@ void init_i2c(void);
 void eeprom_write(uint16_t loc, const char* data, uint8_t len);
 
 void eeprom_read(uint16_t loc, char data[], uint8_t len);
+
+#endif

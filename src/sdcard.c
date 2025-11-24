@@ -10,6 +10,7 @@
 #include "hardware/spi.h"
 #include "ff.h"
 #include "audio.h"
+#include "initializations.h"
 
 // ----------------------------------- SD CARD ----------------------------
 
@@ -23,39 +24,40 @@
 #define SD_SCK 14
 #define SD_MOSI 15
 
-void init_spi_sdcard() {
-    // fill in.
-    gpio_set_dir(SD_SCK, true);
-    gpio_set_dir(SD_CS, true);
-    gpio_set_dir(SD_MISO, false);
-    gpio_set_dir(SD_MOSI, true);
+// Redundant, look at display.c for the initialization function
+// void init_spi_sdcard() {
+//     // fill in.
+//     gpio_set_dir(SD_SCK, true);
+//     gpio_set_dir(SD_CS, true);
+//     gpio_set_dir(SD_MISO, false);
+//     gpio_set_dir(SD_MOSI, true);
 
-    gpio_set_function(SD_SCK, GPIO_FUNC_SPI);
-    gpio_set_function(SD_CS, GPIO_FUNC_SIO);
-    gpio_set_function(SD_MISO, GPIO_FUNC_SPI);
-    gpio_set_function(SD_MOSI, GPIO_FUNC_SPI);
+//     gpio_set_function(SD_SCK, GPIO_FUNC_SPI);
+//     gpio_set_function(SD_CS, GPIO_FUNC_SIO);
+//     gpio_set_function(SD_MISO, GPIO_FUNC_SPI);
+//     gpio_set_function(SD_MOSI, GPIO_FUNC_SPI);
 
-    gpio_put(SD_CS, true);
+//     gpio_put(SD_CS, true);
 
-    spi_init(spi1, 400000);
-    spi_set_format(spi1, 8, 0, 0, SPI_MSB_FIRST);
-}
+//     spi_init(spi1, 400000);
+//     spi_set_format(spi1, 8, 0, 0, SPI_MSB_FIRST);
+// }
 
 void disable_sdcard() {
     // fill in.
     uint16_t buffer = 0xFF;
 
-    gpio_put(SD_CS, true);
+    gpio_put(SD_CSn, true);
     spi_write_blocking(spi1, &(buffer), 1);
 
-    gpio_set_function(SD_MOSI, GPIO_FUNC_SIO);
-    gpio_put(SD_MOSI, true);
+    gpio_set_function(SD_TX, GPIO_FUNC_SIO);
+    gpio_put(SD_TX, true);
 }
 
 void enable_sdcard() {
     // fill in.
-    gpio_set_function(SD_MOSI, GPIO_FUNC_SPI);
-    gpio_put(SD_CS, false);
+    gpio_set_function(SD_TX, GPIO_FUNC_SPI);
+    gpio_put(SD_CSn, false);
 }
 
 void sdcard_io_high_speed() {
