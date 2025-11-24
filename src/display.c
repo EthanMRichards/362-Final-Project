@@ -78,9 +78,9 @@ const uint8_t font5x7[96][5] = {
     {0x40, 0x40, 0x40, 0x40, 0x40}, // _
 };
 
-// Initialize before tft_init()
-void init_spi_lcd_sd(){
-    // SPI INITS for both SD and LCD
+void init_tft(){
+    // SPI INITS for both SD and LCD---------------------------------------
+
     // initialize SPI1 with 48 MHz clock
     spi_init(spi1, 400000); 
     spi_set_format(spi1, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
@@ -93,7 +93,8 @@ void init_spi_lcd_sd(){
     gpio_set_function(SD_CSn, GPIO_FUNC_SPI);
     gpio_set_function(DISPLAY_CSn, GPIO_FUNC_SPI);
 
-    // OTHER GPIO INITS
+    // OTHER GPIO INITS----------------------------------------------------
+
     // DISPLAY
     gpio_set_function(DISPLAY_DC, GPIO_FUNC_SIO);
     gpio_set_function(DISPLAY_RST, GPIO_FUNC_SIO);
@@ -116,6 +117,10 @@ void init_spi_lcd_sd(){
     // Interrupt Initialization
     irq_set_exclusive_handler(IO_IRQ_BANK0, rotary_encoder_select);
     irq_set_enabled(IO_IRQ_BANK0, true);
+
+    // Initialize UI-------------------------------------------------------
+    LCD_Setup();
+    load_image(image_data); // PUT IN IMAGE FILE FOR UI
 }
 
 Picture* load_image(const char* image_data);
@@ -123,12 +128,6 @@ void free_image(Picture* pic);
 
 // The UI will list all the songs and have a cursor. 
 // It will update the cursor and play a selected song based off the rotary encoder
-
-// Initialize UI
-void tft_init(const char* image_data){
-    LCD_Setup();
-    load_image(image_data);
-}
 
 void rotary_encoder_select(){
     if(gpio_get_irq_event_mask(ENC_A) & GPIO_IRQ_EDGE_RISE){
