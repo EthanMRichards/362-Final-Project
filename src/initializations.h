@@ -28,8 +28,18 @@
 #define ENC_SW 40
 
 // EEPROM pins
-#define EE_SCL 19
 #define EE_SDA 18
+#define EE_SCL 19
+
+// i2c Addresses
+#define EEPROM_ADDR 0x50
+#define DAC_ADDR 0x4c // Please verify this
+
+// i2c Assignments
+#define EEPROM_i2c (&i2c0_inst) // i2c0 address
+#define DAC_i2c (&i2c1_inst)    // i2c1 address
+
+
 
 // Initialization functions are seperated by files
 

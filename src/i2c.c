@@ -6,29 +6,30 @@
 #include "hardware/gpio.h"
 #include "hardware/i2c.h"
 #include "i2c.h"
+#include "initializations.h"
 
 void init_i2c() {
     // EEPROM i2c initialization
     i2c_init(EEPROM_i2c, 400000); // fast-mode
-    gpio_set_function(EEPROM_SDA_PIN, GPIO_FUNC_I2C);
-    gpio_set_function(EEPROM_SCL_PIN, GPIO_FUNC_I2C);
-    gpio_set_input_hysteresis_enabled(EEPROM_SDA_PIN, true);
-    gpio_set_input_hysteresis_enabled(EEPROM_SCL_PIN, true);
-    gpio_set_slew_rate(EEPROM_SDA_PIN, GPIO_SLEW_RATE_SLOW);
-    gpio_set_slew_rate(EEPROM_SCL_PIN, GPIO_SLEW_RATE_SLOW);
-    gpio_pull_up(EEPROM_SDA_PIN);
-    gpio_pull_up(EEPROM_SCL_PIN);
+    gpio_set_function(EE_SDA, GPIO_FUNC_I2C);
+    gpio_set_function(EE_SCL, GPIO_FUNC_I2C);
+    gpio_set_input_hysteresis_enabled(EE_SDA, true);
+    gpio_set_input_hysteresis_enabled(EE_SCL, true);
+    gpio_set_slew_rate(EE_SDA, GPIO_SLEW_RATE_SLOW);
+    gpio_set_slew_rate(EE_SCL, GPIO_SLEW_RATE_SLOW);
+    gpio_pull_up(EE_SDA);
+    gpio_pull_up(EE_SCL);
 
     // DAC i2c initialization
     i2c_init(DAC_i2c, 400000); // fast-mode
-    gpio_set_function(DAC_SDA_PIN, GPIO_FUNC_I2C);
-    gpio_set_function(DAC_SCL_PIN, GPIO_FUNC_I2C);
-    gpio_set_input_hysteresis_enabled(DAC_SDA_PIN, true);
-    gpio_set_input_hysteresis_enabled(DAC_SCL_PIN, true);
-    gpio_set_slew_rate(DAC_SDA_PIN, GPIO_SLEW_RATE_SLOW);
-    gpio_set_slew_rate(DAC_SCL_PIN, GPIO_SLEW_RATE_SLOW);
-    gpio_pull_up(DAC_SDA_PIN);
-    gpio_pull_up(DAC_SCL_PIN);
+    gpio_set_function(DAC_SDA, GPIO_FUNC_I2C);
+    gpio_set_function(DAC_SCL, GPIO_FUNC_I2C);
+    gpio_set_input_hysteresis_enabled(DAC_SDA, true);
+    gpio_set_input_hysteresis_enabled(DAC_SCL, true);
+    gpio_set_slew_rate(DAC_SDA, GPIO_SLEW_RATE_SLOW);
+    gpio_set_slew_rate(DAC_SCL, GPIO_SLEW_RATE_SLOW);
+    gpio_pull_up(DAC_SDA);
+    gpio_pull_up(DAC_SCL);
 }
 
 // Can read/write 4 bytes at a time
