@@ -14,6 +14,10 @@
 #define DISPLAY_TX 11
 #define DISPLAY_CSn 14
 
+// More display pins (Placeholder Numbers)
+#define DISPLAY_DC 1
+#define DISPLAY_nRESET 1
+
 // button pins
 #define SELECT_PIN 15
 #define BACK_PIN 16
