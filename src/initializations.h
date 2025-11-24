@@ -11,7 +11,8 @@
 #define SD_TX 15
 #define SD_RX 12
 #define SD_CSn 13
-// will be changed as display pins will likely be on opposite side of the chip from sd pins
+
+// display pins
 #define DISPLAY_SCK 42
 #define DISPLAY_TX 43
 #define DISPLAY_CSn 46
@@ -27,9 +28,18 @@
 #define ENC_SW 40
 
 // EEPROM pins
-
-#define EE_SCL 19
 #define EE_SDA 18
+#define EE_SCL 19
+
+// i2c Addresses
+#define EEPROM_ADDR 0x50
+#define DAC_ADDR 0x4c // Please verify this
+
+// i2c Assignments
+#define EEPROM_i2c (&i2c0_inst) // i2c0 address
+#define DAC_i2c (&i2c1_inst)    // i2c1 address
+
+
 
 // Initialization functions are seperated by files
 
