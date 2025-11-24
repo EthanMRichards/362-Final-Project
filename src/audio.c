@@ -190,7 +190,7 @@ void disable_sdcard() {
     uint16_t buffer = 0xFF;
 
     gpio_put(SD_CS, true);
-    spi_write16_blocking(spi1, &(buffer), 8);
+    spi_write_blocking(spi1, &(buffer), 1);
 
     gpio_set_function(SD_MOSI, GPIO_FUNC_SIO);
     gpio_put(SD_MOSI, true);
@@ -198,8 +198,8 @@ void disable_sdcard() {
 
 void enable_sdcard() {
     // fill in.
-    gpio_put(SD_CS, false);
     gpio_set_function(SD_MOSI, GPIO_FUNC_SPI);
+    gpio_put(SD_CS, false);
 }
 
 void sdcard_io_high_speed() {
