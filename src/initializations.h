@@ -11,16 +11,13 @@
 #define SD_TX 15
 #define SD_RX 12
 #define SD_CSn 13
-// will be changed as display pins will likely be on opposite side of the chip from sd pins
+
+// display pins
 #define DISPLAY_SCK 42
 #define DISPLAY_TX 43
 #define DISPLAY_CSn 46
 #define DISPLAY_RST 45
 #define DISPLAY_DC 44
-
-// More display pins (Placeholder Numbers)
-#define DISPLAY_DC 1
-#define DISPLAY_nRESET 1
 
 // button pins
 #define BACK_PIN 39
@@ -31,7 +28,6 @@
 #define ENC_SW 40
 
 // EEPROM pins
-
 #define EE_SCL 19
 #define EE_SDA 18
 
