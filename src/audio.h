@@ -1,10 +1,6 @@
-typedef struct audio_data
-{
-    int left;
-    int right;
-    audio_data* next;
-} audio_data;
+#ifndef AUDIO_H
+#define AUDIO_H
 
-audio_data current;
-
-void push(int, int);
+// Needed this for spi_dac
+static bool __not_in_flash_func(write_dac_data)();
+#endif

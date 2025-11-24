@@ -2,17 +2,12 @@
   "files.associations": {
     "headers.h": "c",
     "math.h": "c",
-    "timer.h": "c",
-    "irq.h": "c",
-    "stdlib.h": "c",
-    "string.h": "c",
-    "stdbool.h": "c",
-    "stdint.h": "c",
+    "spi_dac.h": "c",
     "multicore.h": "c",
-    "spi.h": "c",
     "initializations.h": "c",
-    "stdatomic.h": "c",
-    "uart.h": "c"
+    "spi.h": "c",
+    "stdlib.h": "c",
+    "string.h": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat",
   "C_Cpp_Runner.cCompilerPath": "gcc",
