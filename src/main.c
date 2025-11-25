@@ -14,8 +14,6 @@
     #include "support.h"
     #include "volume.h"
 
-
-
     // Audio output may be able to be done with the dma if we set up baud rate properly in the spi
     // The idea being that data will be sent at the exact right time by the spi, and then as the buffer empties the dma can be triggered to send more, saving cpu
 
@@ -44,14 +42,18 @@
     // Most of the heavy lifting will be done by timers anyway
  int main(void) {
     stdio_init_all();
-
-    init_pwm_audio();        
-    set_freq(0, 440.0f);
+    init_pwm_audio(); 
+    set_freq(0, 250.0f);
     set_freq(1, 0.0f);
 
+    eq7_init(&g_eq);
+
+    float gain_db = 0.0f;
+
     while (1) {
-        update_volume_from_pot();
-        printf("volume = %u\n", volume);
-        sleep_ms(200);
+        gain_db = gain_tester(gain_db);
+        eq7_set_gain(&g_eq, 1, gain_db);
+        printf("Band 3 gain = %.2f dB\n", g_eq.gaindB[2]);
+        sleep_ms(50);
     }
 }
