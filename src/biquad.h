@@ -47,15 +47,15 @@ typedef struct {
 } eq7_t;  
 
 // API CALLS
-static float dtft (biquadcoeff_t *c /*coeff structweenar*/, biquadstate_t *s /*current z values (L,R)*/, float x/*X signal of X*/); 
-static biquadcoeff_t upper_coeff (float f0, float gaindB); //upper cutoff freq calculation
-static biquadcoeff_t lower_coeff (float f0, float gaindB); //lower cutoff freq calc
-static biquadcoeff_t peak_coeff (float f0, float gaindB); // center freq
-static void eq7_init(eq7_t* e); //init for the struct
-static void norm_a0(biquadcoeff_t* c);//a0 normalizer (1)
+float dtft (biquadcoeff_t *c /*coeff structweenar*/, biquadstate_t *s /*current z values (L,R)*/, float x/*X signal of X*/); 
+biquadcoeff_t upper_coeff (float f0, float gaindB); //upper cutoff freq calculation
+biquadcoeff_t lower_coeff (float f0, float gaindB); //lower cutoff freq calc
+biquadcoeff_t peak_coeff (float f0, float gaindB); // center freq
+void eq7_init(eq7_t* e); //init for the struct
+void norm_a0(biquadcoeff_t* c);//a0 normalizer (1)
 void eq7_process(eq7_t* e, const float* in, float* out, int nFrames);
 void eq7_set_gain(eq7_t* e, int band_idx, float gaindB);
-static void updater(band_t* b, band_type_t type, int band_idx, float gaindB);
-static inline void lerp_coef(biquadcoeff_t* d, const biquadcoeff_t* t, float k);
-
+void updater(band_t* b, band_type_t type, int band_idx, float gaindB);
+void lerp_coef(biquadcoeff_t* d, const biquadcoeff_t* t, float k);
+float eq7_process_mono(eq7_t* e, float x);
 #endif
