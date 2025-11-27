@@ -101,7 +101,7 @@ int margin = 20;
 
 #define PCM_BLOCK_BYTES (FRAMES_PER_BLOCK * STEREO * sizeof(int16_t))
 
-static bool audio_src_init(const char* path, uint32_t target_fs) { 
+static bool audio_src_init(const char* path, uint32_t target_fs) { // this function is probably not used, the sd card init/mounting is done at the beginning of main and file opening is done on select
      FRESULT fr;
 
     init_sdcard_io();
@@ -205,6 +205,7 @@ void open_file(){
     printf(filename);
     printf("\n");
 
+    // TXT SPECIFIC:
     /* Open a text file */
     fr = f_open(&fil, filename, FA_READ);
     if (fr) {
@@ -215,6 +216,19 @@ void open_file(){
     /* Read every line and display it */
     while(f_gets(line, sizeof line, &fil))
         printf(line);
+
+    // END OF TXT SPECIFIC
+
+    // WAV SPECIFIC:
+    // fr = f_open(&fil, filename, FA_READ);
+    // if (fr) {
+    //     print_error(fr, filename);
+    //     return;
+    // }
+    // skip WAV header if needed
+    // f_lseek(&audio_file, 44);
+    // audio_src_task();
+
     /* Close the file */
     printf("\n\n");
     f_close(&fil);
