@@ -104,8 +104,8 @@ static inline void spi_write_frame_s24_stereo(int32_t L, int32_t R)
     uint32_t ur = ((uint32_t)R) & 0x00FFFFFFu;
     // Made alterations to base it off 16 bit spi writes
     uint8_t b[6] = {
-        (uint16_t)(ul >> 16), (uint16_t)ul,
-        (uint16_t)(ur >> 16), (uint16_t)ur
+        (uint16_t)(ul >> 12), (uint16_t)(ul & 0x0FFF),
+        (uint16_t)(ur >> 12), (uint16_t)(ur & 0x0FFF)
     };
     spi_write_blocking(spi0, b, 4);
 }
