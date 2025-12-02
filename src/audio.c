@@ -140,7 +140,7 @@ static bool __not_in_flash_func(dac_timer_cb)(repeating_timer_t *t) {
 }
 
 // Slightly altered version of above dac_timer_cb function to better work with the isr (I think)
-void __not_in_flash_func(write_dac_data)() {
+static void write_dac_data() {
     static int32_t blk[FRAMES_PER_BLOCK * STEREO];
     static int sample_idx = FRAMES_PER_BLOCK;
     static bool have_block = false;
