@@ -11,4 +11,10 @@
     void cat(int argc, char *argv[]);
     void append(int argc, char *argv[]);
     void date(int argc, char *argv[]);
-#endif
+
+typedef struct {
+    char name[64];
+    BYTE attr;
+} DirEntry;
+
+    #endif
