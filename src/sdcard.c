@@ -227,6 +227,12 @@ void open_file(){
     // }
     // skip WAV header if needed
     // f_lseek(&audio_file, 44);
+    // UINT br;
+    // f_read(&audio_file, pcm_blockA, PCM_BLOCK_BYTES, &br);
+    // blockA_ready = (br == PCM_BLOCK_BYTES);
+
+    // f_read(&audio_file, pcm_blockB, PCM_BLOCK_BYTES, &br);
+    // blockB_ready = (br == PCM_BLOCK_BYTES);
     // audio_src_task();
 
     /* Close the file */
